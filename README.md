@@ -14,8 +14,5 @@ In this project, we using:
 - Showing temperature and humidity from DHT11 to web page
 
 # Demo
-
-<video width="640" height="360" controls>
-  <source src="./assets/README/demo.mp4" type="video/mp4">
-Demo video
-</video>
+ 
+ [![Watch the video](https://i.imgur.com/LyOaBnb.jpeg)](https://youtu.be/QTgNVFy-XM0)
