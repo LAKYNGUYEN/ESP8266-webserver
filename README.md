@@ -13,6 +13,10 @@ In this project, we using:
 - Sync LED state crossing all devices
 - Showing temperature and humidity from DHT11 to web page
 
+# Connections
+
+![](./assets/README/connections.png)
+
 # Demo
  
  [![Watch the video](https://i.imgur.com/LyOaBnb.jpeg)](https://youtu.be/QTgNVFy-XM0)
