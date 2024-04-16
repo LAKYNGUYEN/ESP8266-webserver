@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP8266</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" rel="stylesheet"
+        type="text/css" />
+
+    <style>
+        .main-content {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .form-check-control {
+            width: 50px !important;
+            height: 25px !important;
+        }
+
+        .card {
+            border-width: 0 !important;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .card-circle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            height: 150px;
+            border-radius: 200px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <div class="container-fluid main-content">
+
+        <div class="card">
+            <div class="card-body d-flex align-items-center">
+                <div>
+                    <span class="fs-4">LED Builtin</span>
+                </div>
+                <div class="ms-auto form-check form-switch">
+                    <input class="form-check-input form-check-control" type="checkbox" role="switch" id="led-btn">
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <div class="d-flex justify-content-center">
+
+                <div class="bg-danger-subtle card-circle">
+                    <span class="fs-3"><i class="far fa-thermometer-half"></i> <span class="temp-text"></span></span>
+                </div>
+
+                <div class="ms-5 bg-info-subtle card-circle">
+                    <span class="fs-3"><i class="far fa-humidity"></i> <span class="humi-text"></span></span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script>
+        const ws = new WebSocket(`ws://${window.location.host}:81`)
+        const $btn = document.querySelector('#led-btn')
+
+        // HTTP GET request
+        function req(ep, cb) {
+            fetch(ep)
+                .then((res) => res.text())
+                .then((data) => {
+                    if (cb)
+                        cb(data)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
+        function updateButton(state) {
+            $btn.checked = state === '0' ? true : false
+        }
+
+        // Kiem tra thai hien tai cua led
+        req('/getstatus', updateButton)
+
+        // Khi ma nhan nut
+
+        $btn.addEventListener('click', (e) => {
+            req('/toggle', updateButton)
+        })
+    </script>
+
+    <script>
+        ws.addEventListener('message', (e) => {
+            const msg = e.data
+            if (msg.startsWith('LED_STATE')) {
+                updateButton(msg.split(':')[1])
+            }
+
+            if (msg.startsWith('READ_DHT')) {
+                const [temp, humi] = msg.split(':')[1].split('-')
+                document.querySelector('.temp-text').innerHTML = temp + '°C'
+                document.querySelector('.humi-text').innerText = humi + '%'
+            }
+        })
+    </script>
+</body>
+
+</html>
