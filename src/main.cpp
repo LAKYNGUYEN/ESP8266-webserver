@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
 #include <WebSocketsServer.h>
 #include <SimpleDHT.h>
 #include <SimpleTimer.h>
@@ -8,11 +9,12 @@
 #include "MAIN_PAGE.h"
 
 
-const char* ssid = "#ToCoToCo";
-const char* pw = "1900636936";
+const char* ssid = "C21.20";      // Wifi SSID
+const char* pw = "diamondc2120";  // Wifi password
 
 SimpleTimer timer;
 ESP8266WebServer server(80);
+MDNSResponder mdns;
 WebSocketsServer ws = WebSocketsServer(81);
 
 SimpleDHT11 dht11(D0);
@@ -65,6 +67,12 @@ void setup() {
   server.begin();
   ws.begin();
   ws.onEvent(wsHandler);
+  
+  // Setup mDNS
+  if (mdns.begin("ledcontrol")) {
+    Serial.println("mDNS responder started");
+    mdns.addService("http", "tcp", 80);
+  }
 
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, led_state);
@@ -104,6 +112,7 @@ void wsHandler(uint8_t client_id, WStype_t type, uint8_t* payload, size_t length
 void loop() {
   server.handleClient();
   ws.loop();
+  mdns.update();
   timer.run();
 }
 

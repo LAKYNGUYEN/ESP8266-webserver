@@ -4,6 +4,7 @@ In this project, we using:
 
 - WebServer
 - WebSockets
+- mDNS
 - DHT11
 - Timer
 
@@ -18,7 +19,7 @@ In this project, we using:
 ![](./assets/README/connections.png)
 
 # Demo
- 
+
  [![Watch the video](https://i.imgur.com/LyOaBnb.jpeg)](https://youtu.be/QTgNVFy-XM0)
 
 # Tutorial
